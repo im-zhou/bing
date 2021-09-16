@@ -48,6 +48,23 @@ app.use(session({
 app.use(logger('combined', {
     skip: function(req, res) { return res.statusCode < 400 }
 }));
+/*
+ * 手动更新 
+ * /fetch?url=https://www4.bing.com/th?id=OHR.Aldeyjarfoss_ZH-CN0106567013_1920x1080.jpg
+*/
+/*
+app.get('/fetch',function(req,res,next){
+    console.log('Manual fetch!');
+        if(req.query.url){
+            console.log('appJS.fetch 手动抓取!'),
+            qiniuUtils.fetchToQiniu(req.query.url)
+            res.redirect('/');
+        }else{
+            console.log('appJS.fetch.手动抓取失败!'),
+            //console.log(url)
+            res.redirect('/');
+        }
+})*/
 
 // 每天 00:00,00:5,00:10 检测bing数据
 schedule.scheduleJob('0 0,5,10 0 * * *', function() {
@@ -107,38 +124,14 @@ schedule.scheduleJob('0 0,5,10 0 * * *', function() {
     //}, true);
 //});
 
-
 /**
  * 处理OPTIONS请求
  */
 app.use(function(req, res, next) {
-    // console.log('-----------------------------')
-    // console.log(req.headers['host'])
-    // console.log(req.headers['referer'])
-    // console.log('-----------------------------')
-    // if (config.disabled.indexOf(req.headers['host']) > -1) {
-    //     res.sendStatus(400)
-    // }
-    // 
     if (req.method === 'OPTIONS') {
         res.sendStatus(200);
     } else next();
 });
-
-// var images = [
- //    'MangroveRoots_ZH-CN10720576635',
- //    'IzmirFaceWall_ZH-CN8661261728',
-//     'CapeSebastian_ZH-CN9469145123',
-//     'FireEscapes_ZH-CN9251582421',
-//     'LaurelMoss_ZH-CN9578543974'
-// ];
-
-// var resolutions = require('./configs/config').resolutions;
-// for (var i in images) {
-//     var name = images[i];
-//     var link = `http://images.ioliu.cn/bing/${name}_1920x1080.jpg`;
-//     qiniuUtils.specialFetchToQiniu(link);
-// }
 
 app.use('/', index);
 app.use('/photo', photo);
@@ -148,20 +141,7 @@ app.use('/v1', v1);
 app.get('/about.html', function(req, res, next) {
     res.render('about');
 });
-// 手动更新 
-// /fetch?url=https://www4.bing.com/th?id=OHR.Aldeyjarfoss_ZH-CN0106567013_1920x1080.jpg
-app.get('/fetch',function(req,res,next){
-    console.log('Manual fetch!');
-        if(req.query.url){
-            console.log('appJS.fetch qiniuUtils!'),
-            //console.log(url)
-            qiniuUtils.fetchToQiniu(req.query.url)
-        }else{
-            console.log('appJS.fetch.Cant fetch!'),
-            //console.log(url)
-            res.redirect('/');
-        }
-})
+
 /**
  * Robots.txt
  */
@@ -169,19 +149,6 @@ app.get('/robots.txt', function(req, res, next) {
     res.header('content-type', 'text/plain');
     res.send('User-Agent: * \nAllow: /');
 });
-/*
-app.get('/test', function(req, res, next) {
-    console.log('TEST!')
-    var images = [];
-    bingUtils.fetchPicture(function(data) {
-        var enddate = req.query.d || data.enddate;
-        dbUtils.get('bing', {
-            enddate: enddate
-        }, function(data) {
-            res.send(data);
-        });
-    });
-});*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
