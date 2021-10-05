@@ -4,7 +4,8 @@ var router = require('express').Router(),
     weiboUtils = require('../utils/weiboUtils');
 var dbUtils = require('../utils/dbUtils');
 var cookie = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36' };
-var redirect_uri = 'http://bing.bfsea.xyz/weibo/callback';
+const ROOT = process.env.BING_ROOT;
+var redirect_uri = ROOT + 'weibo/callback';
 /**
  * 微博认证
  */
