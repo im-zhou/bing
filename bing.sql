@@ -1,12 +1,6 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : ipv6.bfsea.xyz
- Source Server Type    : MariaDB
- Source Server Version : 100329
- Source Host           : ipv6.bfsea.xyz:2002
- Source Schema         : bing
-
  Target Server Type    : MariaDB
  Target Server Version : 100329
  File Encoding         : 65001
