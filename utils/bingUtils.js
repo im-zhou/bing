@@ -2,9 +2,11 @@ var request = require('superagent');
 var objectAssign = require('object-assign');
 var qiniuUtils = require('./qiniuUtils');
 var commonUtils = require('./commonUtils');
-var bingURL = 'https://www4.bing.com/HPImageArchive.aspx';
+var BIND_URL = process.env.BIND_URL;
+var LANGMKT = process.env.BING_LANG;
 var CDN = process.env.BING_CDN;
-var cookie = { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36' };
+var bingURL = BIND_URL + 'HPImageArchive.aspx';
+var cookie = { 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36 Edg/95.0.1020.44' };
 module.exports = {
     /**
      * 获取 当日Bing图片
@@ -14,7 +16,8 @@ module.exports = {
         var defaultOptions = {
             ids: 0,
             n: 1,
-            format: 'js'
+            format: 'js',
+            mkt: LANGMKT
         };
         if (Object.prototype.toString.call(options) === '[object Object]') {
             // 合并对象
@@ -53,9 +56,9 @@ module.exports = {
                                 longitude: data.longitude,
                                 latitude: data.latitude,
                                 continent: data.continent,
-                                mkt: 'zh-cn',
+                                mkt: LANGMKT,
                                 qiniu_url: data.urlbase.replace("/th?id=", ""),
-                                fetch_url: 'https://www4.bing.com' + data.urlbase + '_1920x1080.jpg',
+                                fetch_url: BIND_URL + data.urlbase + '_1920x1080.jpg',
                             }
                             // 抓取后上传
                             qiniuUtils.fetchToQiniu(newData.fetch_url)
