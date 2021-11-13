@@ -18,8 +18,8 @@ html(lang="en")
         div.preview
             - var small = doc.photo;
             div.progressive
-                - var cdn1 = `http://h1.ioliu.cn/bing/${doc.photo}_1366x768.jpg`;
-                - var root =  'https://bing.ioliu.cn' ;
+                - var cdn1 = `https://v1.cdn.bfsea.xyz/bing/${doc.photo}_1366x768.jpg`;
+                - var root =  'https://bing.bfsea.xyz' ;
                 - var attr = (!!doc['title'] && !!doc['description']) ? `#${doc['title']}# ${doc['description']}` : `${doc['copyright']}`;
                 - var desc = `#必应壁纸# ${doc.dt} / ${attr}`;
                 - var link = `http://service.weibo.com/share/share.php?url=${root}/photo/${doc.photo}&appkey=1833831541&ralateUid=5893653736&pic=${cdn1}&title=`+encodeURIComponent(desc.substring(0,126)+'...');
