@@ -58,7 +58,7 @@ module.exports = {
                                 continent: data.continent,
                                 mkt: LANGMKT,
                                 qiniu_url: data.urlbase.replace("/th?id=", ""),
-                                fetch_url: BIND_URL + data.urlbase + '_1920x1080.jpg',
+                                fetch_url: BIND_URL + data.urlbase.replace("/", "") + '_1920x1080.jpg',
                             }
                             // 抓取后上传
                             qiniuUtils.fetchToQiniu(newData.fetch_url)

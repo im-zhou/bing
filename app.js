@@ -156,7 +156,7 @@ app.use(function(req, res, next) {
     err.status = 404;
     next(err);
 
-    res.redirect('/');
+    //res.redirect('/');
 });
 // error handlers
 // development error handler
