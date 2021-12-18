@@ -6,12 +6,12 @@
     "start": "supervisor node ./bin/www"
   },
   "author": {
-    "name": "xCss",
-    "mail": "xioveliu@gmail.com"
+    "name": "skyxingcheng",
+    "mail": "skyxingcheng233@outlook.com"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xCss/bing.git"
+    "url": "git+https://github.com/skyxingcheng/bing.git"
   },
   "keywords": [
     "Bing",
@@ -20,10 +20,10 @@
     "必应壁纸接口"
   ],
   "bugs": {
-    "url": "https://github.com/xCss/bing/issues"
+    "url": "https://github.com/skyxingcheng/bing/issues"
   },
   "readme": "./readme.md",
-  "homepage": "https://github.com/xCss/bing#readme",
+  "homepage": "https://github.com/skyxingcheng/bing#readme",
   "dependencies": {
     "body-parser": "~1.15.1",
     "cookie-parser": "~1.4.3",
