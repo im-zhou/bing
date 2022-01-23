@@ -2,8 +2,9 @@ var express = require('express');
 var dbUtils = require('../utils/dbUtils');
 var router = express.Router();
 const moment = require('moment');
-const CDN = process.env.BING_CDN;
-const ROOT = process.env.BING_ROOT;
+var config = require('../configs/config');
+const CDN = config.bing_env.BCDN;
+const ROOT = config.bing_env.ROOT;
 /* GET home page. */
 router.get('/', function(req, res, next) {
     console.log('HOMEPAGE!');

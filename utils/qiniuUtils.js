@@ -1,13 +1,13 @@
 var qiniu = require('qiniu');
 var config = require('../configs/config');
-var CDN = process.env.BING_CDN;
+var CDN = config.bing_env.BCDN;
 // access_key and secret_key
-const ACCESS_KEY = process.env.QINIU_ACCESS_KEY;
-const SECRET_KEY = process.env.QINIU_SECRET_KEY;
+const ACCESS_KEY = config.qiniu_dev.AK;
+const SECRET_KEY = config.qiniu_dev.SK;
 const mac = new qiniu.auth.digest.Mac(ACCESS_KEY, SECRET_KEY);
 const qiniuConfig = new qiniu.conf.Config();
 // 上传的空间
-var bucket = process.env.QINIU_BUCKET;
+var bucket = config.qiniu_dev.BUCKET;
 
 module.exports = {
     /**

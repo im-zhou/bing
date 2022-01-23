@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var request = require('superagent');
 var db = require('../utils/dbUtils');
-const CDN = process.env.BING_CDN;
-const ROOT = process.env.BING_ROOT;
+var config = require('../configs/config');
+const CDN = config.bing_env.BCDN;
+const ROOT = config.bing_env.ROOT;
 
 /* GET photo listing. */
 router.get('/:photo', function(req, res, next) {

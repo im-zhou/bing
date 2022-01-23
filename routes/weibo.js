@@ -1,10 +1,11 @@
 var router = require('express').Router(),
     request = require('superagent'),
-    weibo = require('../configs/config').weibo,
+    config = require('../configs/config'),
+    weibo = config.weibo,
     weiboUtils = require('../utils/weiboUtils');
 var dbUtils = require('../utils/dbUtils');
 var cookie = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.71 Safari/537.36' };
-const ROOT = process.env.BING_ROOT;
+const ROOT = config.bing_env.ROOT;
 var redirect_uri = ROOT + 'weibo/callback';
 /**
  * 微博认证

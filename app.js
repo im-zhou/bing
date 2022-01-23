@@ -6,21 +6,24 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var request = require('superagent');
+// 路由
 var index = require('./routes/index');
 var photo = require('./routes/photo');
 var weibo = require('./routes/weibo');
 var v1 = require('./routes/v1');
-var ROOT = process.env.BING_ROOT;
 // 定时器
 var schedule = require('node-schedule');
 
-// 各种工具类
+// 所有类文件
 var dbUtils = require('./utils/dbUtils');
 var bingUtils = require('./utils/bingUtils');
 var mailUtils = require('./utils/mailUtils');
 var qiniuUtils = require('./utils/qiniuUtils');
 var weiboUtils = require('./utils/weiboUtils');
 var config = require('./configs/config');
+
+// URL
+var ROOT = config.bing_env.ROOT;
 
 var app = express();
 app.disable('x-powered-by');
@@ -36,7 +39,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cookieParser(ROOT));
 app.use(session({
-    secret: 'bing app', //secret的值建议使用随机字符串
+    secret: config.bing_env.SERT, //secret的值建议使用随机字符串
     resave: true,
     saveUninitialized: false,
     cookie: {
@@ -50,24 +53,24 @@ app.use(logger('combined', {
 }));
 /*
  * 手动更新 
- * /fetch?url=https://www4.bing.com/th?id=OHR.Aldeyjarfoss_ZH-CN0106567013_1920x1080.jpg
+ * /fetch?url=https://www4.bing.com/th?id=OHR.MeotoIwa_ZH-CN3126370410_1920x1080.jpg
 */
-/*
-app.get('/fetch',function(req,res,next){
-    console.log('Manual fetch!');
-        if(req.query.url){
-            console.log('appJS.fetch 手动抓取!'),
-            qiniuUtils.fetchToQiniu(req.query.url)
-            res.redirect('/');
-        }else{
-            console.log('appJS.fetch.手动抓取失败!'),
-            //console.log(url)
-            res.redirect('/');
-        }
-})*/
 
-// 每天 00:00,00:5,00:10 检测bing数据
-schedule.scheduleJob('0 0,5,10 0 * * *', function() {
+// app.get('/fetch',function(req,res,next){
+//     console.log('Manual fetch!');
+//         if(req.query.url){
+//             console.log('appJS.fetch 手动抓取!'),
+//             qiniuUtils.fetchToQiniu(req.query.url)
+//             res.redirect('/');
+//         }else{
+//             console.log('appJS.fetch.手动抓取失败!'),
+//             //console.log(url)
+//             res.redirect('/');
+//         }
+// })
+
+// 每天 01:00 检测bing数据
+schedule.scheduleJob('0 1 * * *', function() {
     var date = new Date((new Date()).getTime())
     var year = date.getFullYear();
     var month = date.getMonth() + 1;
@@ -148,6 +151,14 @@ app.get('/about.html', function(req, res, next) {
 app.get('/robots.txt', function(req, res, next) {
     res.header('content-type', 'text/plain');
     res.send('User-Agent: * \nAllow: /');
+});
+
+/**
+ * 防止拉取配置文件
+ */
+app.get('/configs/config.js', function (req, res, next) {
+    //req.destroy();
+    res.redirect('/')
 });
 
 // catch 404 and forward to error handler

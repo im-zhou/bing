@@ -7,7 +7,8 @@
  * 设置时区
  */
 process.env.TZ = "Asia/Shanghai";
-
+// 读取配置
+var config = require('../configs/config.js');
 var app = require('../app');
 var debug = require('debug')('API:server');
 var http = require('http');
@@ -15,7 +16,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.BING_PORT || '999');
+var port = normalizePort(config.bing_env.PORT);
 app.set('port', port);
 
 /**
@@ -90,4 +91,6 @@ function onListening() {
         'pipe ' + addr :
         'port ' + addr.port;
     debug('Listening on ' + bind);
+    console.log('Listening on ' + bind);
+
 }

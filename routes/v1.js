@@ -3,7 +3,7 @@ var request = require('superagent');
 var dbUtils = require('../utils/dbUtils');
 var qiniuUtils = require('../utils/qiniuUtils');
 var config = require('../configs/config');
-var CDN = process.env.BING_CDN;
+var CDN = config.bing_env.BCDN;
 var router = express.Router();
 
 /**

@@ -1,22 +1,42 @@
 module.exports = {
-    weibo: {
-        CLIENT_ID: process.env.WEIBO_CLIENT_ID,
-        CLIENT_SECRET: process.env.WEIBO_CLIENT_SECRET,
-        ACCESS_TOKEN: process.env.WEIBO_ACCESS_TOKEN,
-        MASTER_ACCESS_TOKEN: process.env.WEIBO_MASTER_ACCESS_TOKEN,
-        MASTER_UID: process.env.WEIBO_MASTER_UID,
-        USER_UID: process.env.WEIBO_USER_UID
+    bing_env: /*运行环境*/ {
+        PORT: '12345',                          //监听端口
+        SERT: 'abcdefg',                        //随机字符即可
+        BURL: 'https://www4.bing.com/',         //BING的地址
+        BCDN: 'https://v1.cdn.bfsea.xyz/bing/', //你的CDN
+        ROOT: 'https://bing.bfsea.xyz/',        //你的根目录
+        LANG: 'zh-cn'
     },
-    mysql_dev: {
-        host: process.env.MYSQL_HOST,
-        database: process.env.MYSQL_DATABASE,
-        user: process.env.MYSQL_USER,
-        password: process.env.MYSQL_PASSWORD,
-        port: process.env.MYSQL_PORT,
+    qiniu_dev: /*七牛环境*/ {
+        AK: 'aaaaaaaaaaaaaaaaaaa',  //你的七牛AK
+        SK: 'bbbbbbbbbbbbbbbbbbb',  //你的七牛SK
+        BUCKET: 'ccccc'             //你的七牛空间
+    },
+    mail_dev: /*邮件环境*/ {
+        SERV: 'QQ',             //服务类型
+        USER: 'abc@qq.com',     //发件人
+        PASS: 'asdfghjkl',      //发件人密码
+        RECV: 'def@qq.com'      //收件人
+    },
+    mysql_dev: /*数据库环境*/ {
+        host: 'localhost',      //地址
+        database: 'bing',       //库名
+        user: 'bing',           //用户
+        password: 'bing',       //密码
+        port: 3306,             //端口
         connectionLimit: 10,
         supportBigNumbers: true,
         multipleStatements: true,
         insecureAuth: true
+    },
+    weibo: /*微博环境*/ {
+        /* 没用过不知道 */
+        CLIENT_ID: '',
+        CLIENT_SECRET: '',
+        ACCESS_TOKEN: '',
+        MASTER_ACCESS_TOKEN: '',
+        MASTER_UID: '',
+        USER_UID: ''
     },
     //disabled: [process.env.disabled.split(',')],
     /**

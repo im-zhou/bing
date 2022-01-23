@@ -1,10 +1,11 @@
 var nodemailer = require('nodemailer');
+var mail_conf = require('../configs/config').mail_dev;
 module.exports = {
     send: function(data) {
-        var user = process.env.MAIL_USER,
-            pass = process.env.MAIL_PASSWORD,
-            jieshou = '<' + process.env.MAIL_RECIPIENT + '>',
-            mailsrv = process.env.MAIL_SERVICE
+        var user = mail_conf.USER,
+            pass = mail_conf.PASS,
+            jieshou = '<' + mail_conf.RECV +'>',
+            mailsrv = mail_conf.SERV
         var smtpTransport = nodemailer.createTransport("SMTP", {
             service: mailsrv,
             auth: {
