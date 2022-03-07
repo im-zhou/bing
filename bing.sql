@@ -1,19 +1,3 @@
-/*
- Navicat Premium Data Transfer
-
- Source Server         : RPIv6数据节点
- Source Server Type    : MariaDB
- Source Server Version : 100329
- Source Host           : 
- Source Schema         : bing
-
- Target Server Type    : MariaDB
- Target Server Version : 100329
- File Encoding         : 65001
-
- Date: 08/11/2021 10:18:42
-*/
-
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -34,7 +18,7 @@ CREATE TABLE `bing`  (
   `url` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '完整链接',
   `urlbase` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT '基本链接',
   `hsh` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '0' COMMENT 'HSH',
-  `qiniu_url` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '七牛短链\r\n',
+  `qiniu_url` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '七牛短链',
   `longitude` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '经度',
   `latitude` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '纬度',
   `city` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '城市',
@@ -51,7 +35,7 @@ CREATE TABLE `bing`  (
   `fetch_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '同步URL',
   PRIMARY KEY (`id`, `startdate`) USING BTREE,
   INDEX `id-title-attribute-qiniu_url`(`id`, `title`, `attribute`, `qiniu_url`) USING BTREE
-) ENGINE = MyISAM AUTO_INCREMENT = 63 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = MyISAM AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for bing_session

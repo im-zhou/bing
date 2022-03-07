@@ -49,7 +49,7 @@ module.exports = {
                                 copyright: data.copyright,
                                 copyrightlink: data.copyrightlink,
                                 hsh: data.hsh,
-                                title: data.title,
+                                title: data.title.replace('"',"~"),
                                 description: data.description,
                                 attribute: data.attribute,
                                 country: data.country,
