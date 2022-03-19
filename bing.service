@@ -1,0 +1,16 @@
+[Unit]
+Description=Bing WallPaper Node Service
+After=network.target
+
+[Service]
+User=root
+Restart=on-failure
+RestartSec=5s
+
+WorkingDirectory=/home/bing
+ExecStart=supervisor node bin/www
+
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target
