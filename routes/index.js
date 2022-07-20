@@ -1,42 +1,66 @@
-var express = require('express');
-var dbUtils = require('../utils/dbUtils');
-var router = express.Router();
+const express = require('express');
+const dbUtils = require('../utils/dbUtils');
+const router = express.Router();
 const moment = require('moment');
-var config = require('../configs/config');
+const config = require('../configs/config');
 const CDN = config.bing_env.BCDN;
-const ROOT = config.bing_env.ROOT;
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     console.log('HOMEPAGE!');
-    var today = moment().format('YYYYMMDD');
-    var pageNo = req.query.p;
+    const today = moment().format('YYYYMMDD');
+    let pageNo = req.query.p;
     pageNo = !!pageNo && Number(pageNo) > 0 ? Number(pageNo) : 1;
-    var pageSize = 12; // pageSize
-    dbUtils.commonQuery(`select count(0) as sum from bing where (!ISNULL(qiniu_url) || qiniu_url<>"") and mkt like '%zh-cn%' and enddate<='${today}'`, function(rows) {
-        var count = rows[0]['sum'] || 0;
+    const pageSize = 12; // pageSize
+    dbUtils.commonQuery(`select count(0) as sum
+                         from "bing"
+                         where "enddate" <= '${today}'`, function (rest) {
+        //console.info(rest['rows'][0][0])
+        const count = rest['rows'][0][0] || 0;
         if (count > 0) {
-            var page = {
-                size: pageSize,
-                count: count,
-                pageCount: Math.ceil(count / pageSize),
-                next: pageNo + 1 > Math.ceil(count / pageSize) ? Math.ceil(count / pageSize) : pageNo + 1,
-                prev: pageNo - 1 > 0 ? pageNo - 1 : 1,
-                curr: pageNo > Math.ceil(count / pageSize) ? Math.ceil(count / pageSize) : pageNo,
-                currText: pageNo === 1 ? '' : '第' + pageNo + '页',
-                currPage: 'home'
-            }
-            var sql = `select id,title,attribute,description,copyright,qiniu_url as photo,city,country,continent,DATE_FORMAT(enddate, '%Y-%m-%d') as dt,likes,views,downloads,thumbnail_pic,original_pic from bing 
-                        where (!ISNULL(qiniu_url) || qiniu_url<>"") and mkt like '%zh-cn%' and enddate<='${today}'
-                        order by id desc
-                        limit ${(page.curr-1)*page.size},${page.size}`;
-            dbUtils.commonQuery(sql, function(rs) {
-                if (rs.length > 0) {
-                    var data = convert(rs)
+            const pageSize = 12; // pageSize
+            const page = {
+                pageCount: Math.ceil(count / pageSize), // 页数总
+                next: pageNo + 1 > Math.ceil(count / pageSize) ? Math.ceil(count / pageSize) : pageNo + 1, // 下一页
+                prev: pageNo - 1 > 0 ? pageNo - 1 : 1,  // 上一页
+                curr: pageNo > Math.ceil(count / pageSize) ? Math.ceil(count / pageSize) : pageNo, // 当前页
+                currText: pageNo === 1 ? '' : '第' + pageNo + '页', // 文本
+                currPage: 'home', // 不知道
+                data_size: pageSize * pageNo, // 数据最大
+                data_index: (pageSize * (pageNo - 1)), // 数据索引
+            };
+            // console.info(`数据第: ${(page.data_index)} 数据总: ${(page.data_size)} `)
+            // console.info(`页数第: ${(page.curr)} 页数总: ${(page.pageCount)}`)
+
+            const sql = `SELECT *
+                         FROM (SELECT DATA_.*,
+                                      ROWNUM RN
+                               FROM (SELECT "id",
+                                            "title",
+                                            "attribute",
+                                            "description",
+                                            "copyright",
+                                            "qiniu_url",
+                                            "city",
+                                            "country",
+                                            "continent",
+                                            "enddate",
+                                            "likes",
+                                            "views",
+                                            "downloads"
+                                     FROM "bing"
+                                     WHERE "enddate" <= '${today}'
+                                     ORDER BY "enddate" DESC) DATA_
+                               WHERE ROWNUM <= ${page.data_size})
+                         WHERE RN > ${page.data_index}`;
+            dbUtils.commonQuery(sql, function (rs) {
+                //console.info(rs)
+                if (rs['rows'].length > 0) {
+                    const data = convert(rs);
                     res.render('index', {
                         doc: data,
                         page: page
                     });
-                }else{
+                } else {
                     res.redirect('/')
                 }
             });
@@ -44,80 +68,35 @@ router.get('/', function(req, res, next) {
     });
 });
 
-
-/* GET ranking listing. */
-router.get('/ranking', function(req, res, next) {
-    console.log('ranking!');
-    var isAjax = !!req.headers['x-requested-with'];
-    var pageNo = req.query.p;
-    pageNo = !!pageNo && Number(pageNo) > 0 ? Number(pageNo) : 1;
-    var pageSize = 12; // pageSize
-    dbUtils.commonQuery(`select count(0) as sum from bing where (!ISNULL(qiniu_url) || qiniu_url<>"")  and mkt like '%zh-cn%'`, function(rows) {
-        var count = rows[0]['sum'] || 0;
-        if (count > 0) {
-            var page = {
-                size: pageSize,
-                count: count,
-                pageCount: Math.ceil(count / pageSize),
-                next: pageNo + 1 > Math.ceil(count / pageSize) ? Math.ceil(count / pageSize) : pageNo + 1,
-                prev: pageNo - 1 > 0 ? pageNo - 1 : 1,
-                curr: pageNo > Math.ceil(count / pageSize) ? Math.ceil(count / pageSize) : pageNo,
-                currText: pageNo === 1 ? '下载榜' : '第' + pageNo + '页',
-                currPage: 'ranking'
-            }
-            if (pageNo > page.curr && !isAjax) {
-                res.redirect(`/?p=${page.curr}`);
-            }
-            var sql = `select id,title,attribute,description,copyright,qiniu_url as photo,city,country,continent,DATE_FORMAT(enddate, '%Y-%m-%d') as dt,likes,views,downloads,thumbnail_pic,original_pic from bing 
-                        where (!ISNULL(qiniu_url) || qiniu_url<>"")  and mkt like '%zh-cn%'
-                        order by downloads desc
-                        limit ${(page.curr-1)*page.size},${page.size}`;
-            dbUtils.commonQuery(sql, function(rs) {
-                if (rs.length > 0) {
-                    var data = convert(rs)
-                    res.render('index', {
-                        doc: data,
-                        page: page
-                    });
-                }else{
-                    res.redirect('/')
-                }
-            });
-        }
-    });
-});
-
-function convert(rs){
-    var data = [];
-    for (var i in rs) {
-        var temp = rs[i];
+function convert(rs) {
+    let data = [];
+    //console.info(rs)
+    for (const i in rs['rows']) {
+        const temp = rs['rows'][i];
+        //console.info('循环数据: ', temp[0])
         /**
          * 1024x576
          * 120x67
          */
-        var middle = `${CDN}${temp['photo']}_800x480.jpg`;
-        var small = `${CDN}${temp['photo']}_400x240.jpg`;
-        var sharepic = `${CDN}${temp['photo']}_1366x768.jpg`;
-        var desc = `#必应壁纸# ${temp['dt']} / #${temp['title']}# ${temp['description']}`;
-        var share = `http://service.weibo.com/share/share.php?url=${ROOT}photo/${temp['photo']}&appkey=1833831541&pic=${sharepic}&ralateUid=5893653736&title=${encodeURIComponent(desc.substring(0,126)+'...')}`;
-        
+        const middle = `${CDN}${temp[5]}_800x480.jpg`;
+        const small = `${CDN}${temp[5]}_400x240.jpg`;
+
         data.push({
-            id: temp['id'],
-            title: temp['title'],
-            attribute: temp['attribute'],
-            description: temp['description'],
-            copyright: temp['copyright'],
-            photo: temp['photo'],
-            city: temp['city'],
-            country: temp['country'],
-            continent: temp['continent'],
+            id: temp[0],
+            title: temp[1],
+            attribute: temp[2],
+            description: temp[3],
+            copyright: temp[4],
+            photo: temp[5],
+            city: temp[6],
+            country: temp[7],
+            continent: temp[8],
             middle: middle,
             small: small,
-            dt: temp['dt'],
-            likes: temp['likes'],
-            views: temp['views'],
-            downloads: temp['downloads'],
-            share:share
+            dt: temp[9],
+            likes: temp[10],
+            views: temp[11],
+            downloads: temp[12],
         });
     }
 

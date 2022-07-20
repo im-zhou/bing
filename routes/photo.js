@@ -1,20 +1,21 @@
-var express = require('express');
-var router = express.Router();
-var request = require('superagent');
-var db = require('../utils/dbUtils');
-var config = require('../configs/config');
+const express = require('express');
+const router = express.Router();
+const request = require('superagent');
+const db = require('../utils/dbUtils');
+const config = require('../configs/config');
 const CDN = config.bing_env.BCDN;
 const ROOT = config.bing_env.ROOT;
 
 /* GET photo listing. */
-router.get('/:photo', function(req, res, next) {
-    var force = req.query.force || '';
-    var photo = req.params.photo;
-    var isAjax = !!req.headers['x-requested-with'];
+router.get('/:photo', function (req, res, next) {
+    let sql;
+    const force = req.query.force || '';
+    const photo = req.params.photo;
+    const isAjax = !!req.headers['x-requested-with'];
     switch (force) {
         case 'like':
             if (isAjax) {
-                var ck = req.cookies['likes'] || '';
+                let ck = req.cookies['likes'] || '';
                 ck = ck.split('_');
                 if (ck.indexOf(photo) > -1) {
                     res.json({
@@ -23,35 +24,39 @@ router.get('/:photo', function(req, res, next) {
                     });
                     return;
                 }
-                var sql = `update bing as a join (select likes,id from bing WHERE id='${photo}') as b on a.id=b.id set a.likes=(b.likes+1)`;
-                db.commonQuery(sql, function(rows) {
-                    var ret = {
+                sql = `UPDATE "bing"
+                       SET "likes" = ((select "likes" from "bing" WHERE "id" = '${photo}') + 1)
+                       WHERE "id" = '${photo}'`;
+                db.commonQuery(sql, function (rows) {
+                    const ret = {
                         msg: '',
                         code: 200
                     };
-                    if (rows.affectedRows == 0) {
+                    if (rows['rows'] === 0) {
                         ret.msg = 'something happend.'
                     }
                     res.json(ret);
                 });
-            } else {}
+            }
             return;
-            break;
         case 'download':
-            var ua = req.get('User-Agent');
+            const ua = req.get('User-Agent');
             if (!isAjax && !/(spider|bot)/ig.test(ua)) {
-                var sql = `update bing as a join (select downloads,id from bing WHERE qiniu_url='${photo}') as b on a.id=b.id set a.downloads=(b.downloads+1)`;
-                db.commonQuery(sql, function(rows) {});
+                sql = `UPDATE "bing"
+                       SET "downloads" = ((select "downloads" from "bing" WHERE "qiniu_url" = '${photo}') + 1)
+                       WHERE "qiniu_url" = '${photo}'`;
+                db.commonQuery(sql, function (rows) {
+                });
                 res.set({
                     'Content-Type': 'application/octet-stream',
                     'Content-Disposition': 'attachment; filename=' + encodeURI(`${photo}_1920x1080.jpg`)
                 });
                 request.get(`${CDN}${photo}_1920x1080.jpg`)
-                .set({
-                    'User-Agent': ua,
-                    referer: ROOT
-                })
-                .pipe(res);
+                    .set({
+                        'User-Agent': ua,
+                        referer: ROOT
+                    })
+                    .pipe(res);
                 //console.log(`${CDN}bing/${photo}_1920x1080.jpg`)
             } else {
                 res.json({
@@ -60,11 +65,23 @@ router.get('/:photo', function(req, res, next) {
                 })
             }
             return;
-            break;
     }
 
-    var sql = `select id,title,attribute,description,copyright,qiniu_url as photo,city,country,continent,DATE_FORMAT(enddate, '%Y-%m-%d') as dt,likes,views,downloads,thumbnail_pic from bing 
-            where qiniu_url='${photo}'`;
+    sql = `select "id",
+                  "title",
+                  "attribute",
+                  "description",
+                  "copyright",
+                  "qiniu_url",
+                  "city",
+                  "country",
+                  "continent",
+                  "enddate",
+                  "likes",
+                  "views",
+                  "downloads"
+           from "bing"
+           where "qiniu_url" = '${photo}'`;
     if (isAjax) {
         res.send({
             code: 200,
@@ -72,20 +89,24 @@ router.get('/:photo', function(req, res, next) {
         });
     } else {
         // 修改展示量
-        db.commonQuery(`update bing as a join (select views,id from bing WHERE qiniu_url='${photo}') as b on a.id=b.id set a.views=(b.views+1)`, function(rows) {});
+        db.commonQuery(`UPDATE "bing"
+                        SET "views" = ((select "views" from "bing" WHERE "qiniu_url" = '${photo}') + 1)
+                        WHERE "qiniu_url" = '${photo}'`, function (rows) {
+        });
         // 返回数据
-        db.commonQuery(sql, function(rows) {
-            if (rows.length > 0) {
-                var doc = rows[0];
+        db.commonQuery(sql, function (rows) {
+            if (rows['rows'].length > 0) {
+                const doc = rows['rows'][0];
+                //console.info(doc)
                 doc['large'] = `${CDN}${photo}_1920x1080.jpg`;
                 doc['small'] = `${CDN}${photo}_640x360.jpg`;
                 if (force.indexOf('_') > -1) {
-                    var rt = force.split('_');
+                    const rt = force.split('_');
                     doc['back_url'] = rt[0] === 'ranking' ? '/ranking?p=' + rt[1] : '/?p=' + rt[1];
                 } else {
                     doc['back_url'] = '/';
                 }
-                res.render('detail', { doc: doc });
+                res.render('detail', {doc: doc});
             } else {
                 res.redirect(`/`);
             }
@@ -95,7 +116,7 @@ router.get('/:photo', function(req, res, next) {
 /**
  * 如果没有参数，则跳转到首页
  */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
     res.redirect('/');
 });
 

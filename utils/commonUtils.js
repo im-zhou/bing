@@ -7,7 +7,7 @@ module.exports = {
      * @callback    回调函数
      */
     convert: function (err, res, callback) {
-        console.log('=====CommonQuery=====')
+        //console.log('=====响应信息处理=====')
         try {
             if (!err && res.status === 200) {
                 var error_code = null;
