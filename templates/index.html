@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title><link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/static/css/iconfont.css"><link rel="stylesheet" href="/static/css/common.css"><link rel="stylesheet" href="/static/css/main.css">
+  <style>.card img{aspect-ratio:5/3;object-fit:cover} .empty{font-size:16px;padding:60px;text-align:center} .search{max-width:680px;margin:20px auto;padding:0 15px}.search input{display:block;width:100%;height:44px;padding:0 14px;border:1px solid #d7e5e5;border-radius:8px;background:#fff;color:#245757;font:inherit;font-size:16px;outline:none}.search input:focus{border-color:#0c8484;box-shadow:0 0 0 3px rgba(12,132,132,.1)} @media(hover:none){.card .mark,.card .options,.card .description{opacity:1!important}}</style>
+</head>
+<body>
+<header><div class="container"><a class="logo" href="/"><i class="icon icon-bing"></i><span>必应壁纸</span></a>
+<nav><ul class="menu"><li {{if eq .Section "home"}}class="active"{{end}}><a href="/"><i class="icon icon-home"></i><p class="text">首页</p></a></li><li {{if eq .Section "ranking"}}class="active"{{end}}><a href="/ranking"><i class="icon icon-ranking"></i><p class="text">下载榜</p></a></li><li><a href="/static/about.html"><i class="icon icon-about"></i><p class="text">关于</p></a></li></ul></nav></div></header>
+<div class="holder"></div>
+<form class="search" method="get" action="{{.Base}}" role="search"><input type="search" name="q" value="{{.Query}}" maxlength="200" aria-label="搜索日期、标题或文件名" placeholder="输入日期、标题或文件名，回车搜索" enterkeyhint="search"></form>
+<div class="container">
+{{range .Photos}}<div class="item"><div class="card">
+  <img src="{{.Middle}}" loading="lazy" decoding="async" alt="{{.Copyright}}">
+  <a class="mark" href="/photo/{{.Slug}}?force={{$.Section}}_{{$.Current}}{{if $.Query}}&amp;q={{$.Query}}{{end}}" aria-label="查看 {{.Title}}"></a>
+  <div class="description"><h3>{{.Copyright}}</h3><p class="calendar"><i class="icon icon-calendar"></i><em class="t">{{.Date}}</em></p>{{if .Location}}<p class="location"><i class="icon icon-location"></i><em class="t">{{.Location}}</em></p>{{end}}<p class="view"><i class="icon icon-eye"></i><em class="t">{{.Views}}</em></p></div>
+  <div class="options"><a class="ctrl share" href="{{.Share}}" target="_blank" rel="noopener nofollow"><i class="icon icon-share"></i><em class="t">分享</em></a><span class="ctrl heart" role="button" tabindex="0" photo="{{.ID}}" likes="{{.Likes}}"><i class="icon icon-heart"></i><em class="t">{{.Likes}}</em></span><a class="ctrl download" href="/photo/{{.Slug}}?force=download" rel="nofollow"><i class="icon icon-download"></i><em class="t">{{.Downloads}}</em></a></div>
+</div></div>{{else}}<p class="empty">{{if .Query}}没有找到匹配的图片，请尝试其他日期、标题或文件名。{{else}}暂无图片，等待同步完成后刷新。{{end}}</p>{{end}}
+</div><div class="page"><a href="{{.PrevURL}}">上一页</a><span>{{.Current}} / {{.Pages}}</span><a href="{{.NextURL}}">下一页</a></div>
+<div class="copyright"><p>本站所有图片均来自 <a href="https://www.bing.com" target="_blank" rel="noopener">必应搜索</a></p><p>原作：云淡清风 · 修改：IM落蝶花尽</p></div>
+<script src="/static/js/like.js" defer></script>
+</body></html>

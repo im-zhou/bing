@@ -1,0 +1,7 @@
+.git
+config.yaml
+config.yml
+config.json
+dist
+bing
+*.log

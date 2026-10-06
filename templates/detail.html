@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{.Doc.Title}} | 必应每日高清壁纸</title>
+<meta name="description" content="{{.Doc.Description}}"><link rel="icon" href="/favicon.ico">
+<link rel="stylesheet" href="/static/css/iconfont.css"><link rel="stylesheet" href="/static/css/common.css"><link rel="stylesheet" href="/static/css/main.css">
+<style>.detail .wallpaper{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.detail .preview img{width:100%;height:100%}.detail .preview .options,.detail .preview .description{z-index:1}.detail .preview .description{max-height:45vh;overflow:auto}</style>
+</head><body class="detail"><div class="preview">
+<img class="wallpaper" src="{{.Doc.Large}}" alt="{{.Doc.Copyright}}">
+<div class="options"><a class="ctrl left" href="{{.Back}}"><i class="icon icon-left"></i><em class="t">返回</em></a><a class="ctrl share" href="{{.Doc.Share}}" target="_blank" rel="noopener nofollow"><i class="icon icon-share"></i><em class="t">分享</em></a><span class="ctrl heart" role="button" tabindex="0" photo="{{.Doc.ID}}" likes="{{.Doc.Likes}}"><i class="icon icon-heart"></i><em class="t">{{.Doc.Likes}}</em></span><a class="ctrl download" href="/photo/{{.Doc.Slug}}?force=download"><i class="icon icon-download"></i><em class="t">{{.Doc.Downloads}}</em></a></div>
+<div class="description"><p class="title">{{.Doc.Copyright}}</p><p class="sub">{{.Doc.Description}}</p><p><i class="icon icon-calendar"></i><em class="t">{{.Doc.Date}}</em></p>{{if .Doc.Location}}<p><i class="icon icon-location"></i><em class="t">{{.Doc.Location}}</em></p>{{end}}<p><i class="icon icon-eye"></i><em class="t">{{.Doc.Views}}</em></p></div>
+</div><script src="/static/js/like.js" defer></script></body></html>

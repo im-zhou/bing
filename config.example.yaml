@@ -1,0 +1,31 @@
+# 复制为 config.yaml 后修改数据库连接信息。
+listen: ":12345"
+root_url: "https://bing.example.com"
+bing_url: "https://www.bing.com"
+market: "zh-CN"
+timezone: "Asia/Shanghai"
+sync_cron: "0 1 * * *"
+sync_on_start: true
+
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  database: "bing"
+  user: "bing"
+  password: "change-me" # 也可通过 BING_MYSQL_PASSWORD 环境变量覆盖。
+  max_open: 10
+  max_idle: 5
+
+# 不填写 address 时关闭邮件通知。
+smtp:
+  address: ""
+  username: ""
+  password: ""
+  from: ""
+  to: ""
+
+# 不填写 client_id 时关闭微博功能。
+weibo:
+  client_id: ""
+  client_secret: ""
+  session_secret: ""
