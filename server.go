@@ -345,7 +345,7 @@ func (a *App) api(w http.ResponseWriter, r *http.Request) {
 		a.apiJSON(w, 200, map[string]any{"data": map[string]string{"enddate": p.EndDate, "url": u, "bmiddle_pic": middle, "original_pic": original, "thumbnail_pic": thumb}, "status": map[string]any{"code": 200, "message": ""}}, cb)
 		return
 	}
-	if r.URL.Path != "/v1/blur" && q.Get("type") == "redirect" {
+	if r.URL.Path != "/v1/blur" && q.Get("type") != "stream" {
 		u, e := imageURL(a.cfg.BingURL, p, width, height)
 		if e != nil {
 			a.apiError(w, 502, e.Error(), cb)

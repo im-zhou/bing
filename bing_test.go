@@ -259,7 +259,7 @@ func TestOriginalSchemaIntegration(t *testing.T) {
 			t.Fatal(w.Code, w.Body.String())
 		}
 	}
-	for _, path := range []string{"/v1", "/v1?w=321&h=199", "/v1/blur?w=64&h=36&r=2"} {
+	for _, path := range []string{"/v1?type=stream", "/v1?type=stream&w=321&h=199", "/v1/blur?w=64&h=36&r=2"} {
 		w := request(path)
 		if w.Code != 200 {
 			t.Fatal(path, w.Code, w.Body.String())
@@ -268,7 +268,7 @@ func TestOriginalSchemaIntegration(t *testing.T) {
 		if e != nil {
 			t.Fatal(e)
 		}
-		if path != "/v1" && decoded.Bounds().Dx() != map[string]int{"/v1?w=321&h=199": 321, "/v1/blur?w=64&h=36&r=2": 64}[path] {
+		if path != "/v1?type=stream" && decoded.Bounds().Dx() != map[string]int{"/v1?type=stream&w=321&h=199": 321, "/v1/blur?w=64&h=36&r=2": 64}[path] {
 			t.Fatal(decoded.Bounds())
 		}
 	}

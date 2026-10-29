@@ -59,14 +59,15 @@ go build -trimpath -ldflags='-s -w' -o bing .
 | `/about.html` / `/static/about.html` | GET | 关于页面 |
 | `/healthz` | GET | 数据库连接健康检查 |
 
-`/v1` 与 `/v1/rand` 默认返回图片内容，保留原接口使用方式；`w`、`h` 默认 `1366`、`768`。原有常用分辨率由 Bing 提供，其他分辨率由 Go 获取原图后在内存中居中裁剪。图片尺寸不保证是更高分辨率的原生摄影源。
+`/v1`、`/v1/` 与 `/v1/rand` 默认返回 HTTP 302，Location 指向 Bing 图片地址，本站不请求或转发图片内容；GET 和 POST 均如此。`w`、`h` 默认 `1366`、`768`。需要原来的图片转发时显式指定 `type=stream`；该模式下非标准尺寸由 Go 获取原图后在内存中居中裁剪。`/v1/blur` 继续返回 Go 处理后的模糊图片。图片尺寸不保证是更高分辨率的原生摄影源。
 
-支持 query、POST 表单和 POST JSON，query 优先。`type=json` 返回 JSON，`callback=app.done` 返回 JSONP（仅允许合法 JS 标识符链）。`type=redirect` 新增为 302 到 Bing，适合减少本站图片转发带宽。
+支持 query、POST 表单和 POST JSON，query 优先。`type=json` 返回 JSON，`callback=app.done` 返回 JSONP（仅允许合法 JS 标识符链）。`type=redirect` 仍可显式指定 302 跳转，`type=stream` 显式请求图片转发。
 
 ```text
 /v1?type=json
 /v1?d=1&w=1920&h=1080
-/v1/rand?type=redirect&w=1920&h=1080
+/v1/rand?w=1920&h=1080
+/v1?type=stream&w=1920&h=1080
 /v1/blur?w=640&h=360&r=10
 ```
 
@@ -87,7 +88,7 @@ JSON 保留原 envelope 和字段：
 
 差异：无数据返回 HTTP 404 和 `status.code=404`，参数错误返回 400，上游图片失败返回 502；数据库错误返回 500。原版部分错误会挂起、重定向循环或返回 HTTP 200，现在返回明确错误。图片只筛选配置语言且不显示未来日期。
 
-图片转发不落盘，设置 30 秒上游超时，单图最多 20 MiB。本地裁剪/模糊限制为 4,000,000 输出像素、4 个并发；普通 Bing 原图请求最多 8,294,400 像素。动态处理会消耗 CPU；高频调用宜缓存响应。JSON 和 redirect 使用 Bing 地址，Bing 对非标准尺寸/部分历史图片可能返回 404；需要任意尺寸裁剪时使用默认图片响应。
+图片转发不落盘，设置 30 秒上游超时，单图最多 20 MiB。本地裁剪/模糊限制为 4,000,000 输出像素、4 个并发；普通 Bing 原图请求最多 8,294,400 像素。动态处理会消耗 CPU；高频调用宜缓存响应。JSON 和 redirect 使用 Bing 地址，Bing 对非标准尺寸/部分历史图片可能返回 404；需要任意尺寸裁剪时使用 `type=stream`。
 
 点赞继续使用 Cookie 防止同一浏览器重复操作，这是浏览器级限制，可清除 Cookie，不是账户级去重。计数改为原子 `COALESCE(column,0)+1`；下载完成后才统计下载量。页面样式保留，使用原生懒加载与 JS，移除了 jQuery 依赖和禁止开发者工具的脚本。
 

@@ -5,17 +5,17 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-#User=bing
-#Group=bing
-WorkingDirectory=/home/bing2
-ExecStart=/home/bing2/bing -config /home/bing2/config.yaml
+User=bing
+Group=bing
+WorkingDirectory=/opt/bing
+ExecStart=/opt/bing/bing -config /opt/bing/config.yaml
 Restart=on-failure
 RestartSec=5s
 TimeoutStopSec=30s
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
-#ProtectHome=true
+ProtectHome=true
 
 [Install]
 WantedBy=multi-user.target

@@ -74,7 +74,7 @@ func (s *Syncer) Sync(ctx context.Context) (int, error) {
 		Images []bingImage `json:"images"`
 	}
 	var err error
-	for attempt := range 3 {
+	for attempt := 0; attempt < 3; attempt++ {
 		err = s.fetch(ctx, endpoint, &payload)
 		if err == nil {
 			break
